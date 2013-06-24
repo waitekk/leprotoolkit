@@ -1,0 +1,16 @@
+{
+    "name": "waitekk/leprotoolkit",
+    "description": "Набор плюшек для работы с Лепрозорием",
+    "minimum-stability": "dev",
+    "authors": [
+        {
+            "name": "Max Zaets",
+            "email": "waitekk.work@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-0": {
+            "LeproToolkit": "LeproToolkit/"
+        }
+    }
+}
