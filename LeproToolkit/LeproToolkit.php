@@ -42,8 +42,6 @@ class LeproToolkit {
 	 */
 	public function __construct($uid, $sid)
 	{
-        $this->debug = $debug;
-
 		if(!extension_loaded('curl'))
 		{
 			throw new \Exception('Не загружен curl');
