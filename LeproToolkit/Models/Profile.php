@@ -81,4 +81,20 @@ class Profile {
      * Вес голоса
      */
     public $voteweight;
+
+    /**
+     * Проверяет большой рассказ о себе на наличие подстроки
+     *
+     * @param $str
+     * @return bool
+     */
+    public function storyContains($str)
+    {
+        if(strpos($this->userstory, $str))
+        {
+            return true;
+        }
+
+        return false;
+    }
 }
