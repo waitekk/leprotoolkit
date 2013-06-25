@@ -119,7 +119,7 @@ class LeproToolkit {
      * @param $username
      * @return mixed Profile
      */
-    public function getUserProfileByUsername($username)
+    public function getProfileByUsername($username)
     {
         $parser = new ProfileParser($this->getFetcher()->fetchProfileByUsername($username));
         $profile = $parser->parseProfile();
@@ -132,7 +132,7 @@ class LeproToolkit {
      * @param $uid
      * @return mixed Profile
      */
-    public function getUserProfileById($uid)
+    public function getProfileById($uid)
     {
         $parser = new ProfileParser($this->getFetcher()->fetchProfileById($uid), 'json');
         $profile = $parser->parseProfile();

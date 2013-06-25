@@ -7,8 +7,8 @@ LeproToolkit это удобная обертка для работы с Леп�
 ```php
 $toolkit = new LeproToolkit(99999, '0af31fgqjirwgfoqjf5wiqjf3194jfqj');
 
-$user  = $toolkit->getUserProfileById(29910);
-$user2 = $toolkit->getUserProfileByUsername('waitekk'); // WIP
+$user  = $toolkit->getProfileById(29910);
+$user2 = $toolkit->getProfileByUsername('waitekk'); // WIP
 
 $activationCode = '35cm';
 
