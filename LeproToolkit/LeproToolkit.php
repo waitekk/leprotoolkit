@@ -12,30 +12,30 @@ use LeproToolkit\Components\LeproToolkitException;
  * @package LeproToolkit
  */
 class LeproToolkit {
-    /**
-     * Ссылка на ресурс с курлом
-     */
-    protected $_curl;
-
-    /**
-     * Фетчер
-     * @var Fetcher
-     */
-    protected $_fetcher;
-
-    /**
-     * Идентификатор сессии
-     */
-    protected $_sid;
-
-    /**
-     * Лепрономер, от чьего имени будем работать
-     */
-    protected $_uid;
+	/**
+	 * Ссылка на ресурс с курлом
+	 */
+	protected $_curl;
 
 	/**
-     * Запуск
-     *
+	 * Фетчер
+	 * @var Fetcher
+	 */
+	protected $_fetcher;
+
+	/**
+	 * Идентификатор сессии
+	 */
+	protected $_sid;
+
+	/**
+	 * Лепрономер, от чьего имени будем работать
+	 */
+	protected $_uid;
+
+	/**
+	 * Запуск
+	 *
 	 * @param $uid integer Лепрономер
 	 * @param $sid string Идентификатор сессии пользователя
 	 *
@@ -65,77 +65,77 @@ class LeproToolkit {
 		$this->initCurl();
 	}
 
-    /**
-     * Гарантированно прибиваем курл
-     */
-    public function __destruct()
-    {
-        curl_close($this->_curl);
-    }
-
-    /**
-     * Инициализирует курл
-     */
-    protected function initCurl()
+	/**
+	 * Гарантированно прибиваем курл
+	 */
+	public function __destruct()
 	{
-        if(null === $this->_curl)
-        {
-            $this->_curl = curl_init();
-            curl_setopt($this->_curl, CURLOPT_RETURNTRANSFER, 1);
-            curl_setopt($this->_curl, CURLOPT_VERBOSE, 1);
-            curl_setopt($this->_curl, CURLOPT_COOKIE, $this->prepareCookies());
-        }
-
-        return $this->_curl;
+		curl_close($this->_curl);
 	}
 
-    /**
-     * Готовим нужные куки
-     * @return string
-     */
-    protected function prepareCookies()
-    {
-        return 'uid=' . $this->_uid . '; sid=' . $this->_sid;
-    }
+	/**
+	 * Инициализирует курл
+	 */
+	protected function initCurl()
+	{
+		if(null === $this->_curl)
+		{
+			$this->_curl = curl_init();
+			curl_setopt($this->_curl, CURLOPT_RETURNTRANSFER, 1);
+			curl_setopt($this->_curl, CURLOPT_VERBOSE, 1);
+			curl_setopt($this->_curl, CURLOPT_COOKIE, $this->prepareCookies());
+		}
 
-    /**
-     * Ссылка на фетчер
-     *
-     * @return Fetcher
-     */
-    protected function getFetcher()
-    {
-        if(null === $this->_fetcher)
-        {
-            $this->_fetcher = new Fetcher($this->_curl);
-        }
+		return $this->_curl;
+	}
 
-        return $this->_fetcher;
-    }
+	/**
+	 * Готовим нужные куки
+	 * @return string
+	 */
+	protected function prepareCookies()
+	{
+		return 'uid=' . $this->_uid . '; sid=' . $this->_sid;
+	}
 
-    /**
-     * Возвращает профайл пользователя по его юзернейму
-     *
-     * @param $username
-     * @return mixed Profile
-     */
-    public function getProfileByUsername($username)
-    {
-        $parser = new ProfileParser($this->getFetcher()->fetchProfileByUsername($username));
-        $profile = $parser->parseProfile();
-        return $profile;
-    }
+	/**
+	 * Ссылка на фетчер
+	 *
+	 * @return Fetcher
+	 */
+	protected function getFetcher()
+	{
+		if(null === $this->_fetcher)
+		{
+			$this->_fetcher = new Fetcher($this->_curl);
+		}
 
-    /**
-     * Возвращает профайл пользователя по лепрономеру
-     *
-     * @param $uid
-     * @return mixed Profile
-     */
-    public function getProfileById($uid)
-    {
-        $parser = new ProfileParser($this->getFetcher()->fetchProfileById($uid), 'json');
-        $profile = $parser->parseProfile();
-        return $profile;
-    }
+		return $this->_fetcher;
+	}
+
+	/**
+	 * Возвращает профайл пользователя по его юзернейму
+	 *
+	 * @param $username
+	 * @return mixed Profile
+	 */
+	public function getProfileByUsername($username)
+	{
+		$parser = new ProfileParser($this->getFetcher()->fetchProfileByUsername($username));
+		$profile = $parser->parseProfile();
+		return $profile;
+	}
+
+	/**
+	 * Возвращает профайл пользователя по лепрономеру
+	 *
+	 * @param $uid
+	 * @return mixed Profile
+	 */
+	public function getProfileById($uid)
+	{
+		$parser = new ProfileParser($this->getFetcher()->fetchProfileById($uid), 'json');
+		$profile = $parser->parseProfile();
+		return $profile;
+	}
 }
