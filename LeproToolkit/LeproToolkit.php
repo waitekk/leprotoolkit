@@ -3,7 +3,8 @@
 namespace LeproToolkit;
 
 use LeproToolkit\Parsers\ProfileParser;
-use LeproToolkit\Fetcher;
+use LeproToolkit\Components\Fetcher;
+use LeproToolkit\Components\LeproToolkitException;
 
 /**
  * Главный класс для работы с лепрой.
@@ -44,19 +45,19 @@ class LeproToolkit {
 	{
 		if(!extension_loaded('curl'))
 		{
-			throw new \Exception('Не загружен curl');
+			throw new \Exception('curl PHP extension not loaded');
 		}
 
 		if(!is_numeric($uid))
 		{
-			throw new \Exception('Неверно заданы идентификатор пользователя');
+			throw new LeproToolkitException('Wrong user ID');
 		}
 
 		$this->_uid = $uid;
 
 		if(strlen($sid) != 32)
 		{
-			throw new \Exception('Неверно задан идентификатор сессии');
+			throw new LeproToolkitException('Wrond session ID');
 		}
 
 		$this->_sid = $sid;

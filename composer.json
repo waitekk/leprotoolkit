@@ -1,6 +1,6 @@
 {
     "name": "waitekk/leprotoolkit",
-    "description": "Набор плюшек для работы с Лепрозорием",
+    "description": "Small and convenient toolkit for Leprosorium website.",
     "minimum-stability": "dev",
     "authors": [
         {

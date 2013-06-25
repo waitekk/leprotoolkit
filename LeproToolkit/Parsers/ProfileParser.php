@@ -2,6 +2,7 @@
 
 namespace LeproToolkit\Parsers;
 
+use LeproToolkit\Components\LeproToolkitException;
 use LeproToolkit\Models\Profile;
 
 /**
@@ -38,7 +39,7 @@ class ProfileParser {
     {
         if($response == '')
         {
-            throw new \Exception('Нет данных для работы');
+            throw new LeproToolkitException('No data retrieved'); // todo: перенести исключение в фетчер?
         }
 
         $this->_response = $response;

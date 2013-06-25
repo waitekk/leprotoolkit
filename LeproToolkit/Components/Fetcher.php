@@ -1,6 +1,6 @@
 <?php
 
-namespace LeproToolkit;
+namespace LeproToolkit\Components;
 
 /**
  * Обертка над курлом, стягивающая с лепры необходимые странички.
@@ -71,20 +71,20 @@ class Fetcher {
         }
 
         if(strpos($result, 'Просто у вас нет доступа')) {
-            throw new \Exception('Нет доступа к подлепре');
+            throw new LeproToolkitException('Access forbidden');
         }
 
         if(strpos($result, 'Дело в том, что такого сайта еще не существует.')) {
-            throw new \Exception('Нет такой подлепры');
+            throw new LeproToolkitException('No such subsite');
         }
 
         if(strpos($result, 'ДОБРО ПОЖАЛОВАТЬ НА СТРАНИЦУ 404! ')) {
-            throw new \Exception('404');
+            throw new LeproToolkitException('404');
         }
 
         if($redirect == 'http://' . $this->baseHost . '/off/index.html')
         {
-            throw new \Exception('Лепру выключили');
+            throw new LeproToolkitException('Leprosorium is offline');
         }
 
         return $result;
