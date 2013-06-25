@@ -10,83 +10,150 @@ namespace LeproToolkit\Components;
  */
 class Fetcher {
 
-    /**
-     * Основной домен
-     */
-    public $baseHost = 'leprosorium.ru';
+	/**
+	 * Основной домен
+	 */
+	public $baseHost = 'leprosorium.ru';
 
-    /**
-     * Подлепра
-     */
-    public $subSite = '';
+	/**
+	 * Подлепра
+	 */
+	public $subSite = '';
 
-    /**
-     * Cсылка на curl
-     */
-    protected $_curl;
+	/**
+	 * Cсылка на curl
+	 */
+	protected $_curl;
 
-    public function __construct($curl)
-    {
-        $this->_curl = $curl;
-    }
+	public function __construct($curl)
+	{
+		$this->_curl = $curl;
+	}
 
-    /**
-     * Забирает HTML профайла по юзернейму
-     *
-     * @param $username
-     * @return mixed
-     */
-    public function fetchProfileByUsername($username)
-    {
-        return $this->fetchUrl('http://' . $this->baseHost . '/users/' . $username);
-    }
+	/**
+	 * Забирает HTML профайла по юзернейму
+	 *
+	 * @param $username
+	 * @return mixed
+	 */
+	public function fetchProfileByUsername($username)
+	{
+		return $this->fetchUrl('http://' . $this->baseHost . '/users/' . trim($username));
+	}
 
-    /**
-     * Забирает JSON профайла через API лепропанели
-     *
-     * @param $uid
-     * @return mixed
-     */
-    public function fetchProfileById($uid)
-    {
-        return $this->fetchUrl('http://' . $this->baseHost . '/api/lepropanel/' . $uid);
-    }
+	/**
+	 * Забирает JSON профайла через API лепропанели
+	 *
+	 * @param $uid
+	 * @return mixed
+	 */
+	public function fetchProfileById($uid)
+	{
+		return $this->fetchUrl('http://' . $this->baseHost . '/api/lepropanel/' . $uid);
+	}
 
-    /**
-     * Основная функция обращения к лепре
-     *
-     * @param $url
-     * @return mixed
-     * @throws \Exception
-     */
-    public function fetchUrl($url)
-    {
-        try {
-            curl_setopt($this->_curl, CURLOPT_URL, $url);
-            $result = curl_exec($this->_curl);
-            $redirect = curl_getinfo($this->_curl, CURLINFO_EFFECTIVE_URL);
-        } catch(\Exception $e)
-        {
-            // todo: log?
-        }
+	/**
+	 * Основная функция обращения к лепре
+	 *
+	 * @param $url
+	 * @return mixed
+	 * @throws LeproToolkitException
+	 */
+	public function fetchUrl($uri)
+	{
+		try {
+			curl_setopt($this->_curl, CURLOPT_URL, $url);
+			$response = curl_exec($this->_curl);
+			$url = curl_getinfo($this->_curl, CURLINFO_EFFECTIVE_URL);
+		} catch(\Exception $e)
+		{
+			// todo: log?
+		}
 
-        if(strpos($result, 'Просто у вас нет доступа')) {
-            throw new LeproToolkitException('Access forbidden');
-        }
+		if($this->is404($response))
+		{
+			throw new LeproToolkitException('404', 404);
+		}
 
-        if(strpos($result, 'Дело в том, что такого сайта еще не существует.')) {
-            throw new LeproToolkitException('No such subsite');
-        }
+		if($this->isOffline($response))
+		{
+			throw new LeproToolkitException('Leprosorium is offline', 503);
+		}
 
-        if(strpos($result, 'ДОБРО ПОЖАЛОВАТЬ НА СТРАНИЦУ 404! ')) {
-            throw new LeproToolkitException('404');
-        }
+		// TODO: сейчас не используется, продумать более правильный алгоритм
+		if($this->subSite != '')
+		{
+			if($this->isNoSuchSubSite($url))
+			{
+				throw new LeproToolkitException('No such subsite', 404);
+			}
 
-        if($redirect == 'http://' . $this->baseHost . '/off/index.html')
-        {
-            throw new LeproToolkitException('Leprosorium is offline');
-        }
+			if($this->isAccessForbidden($response))
+			{
+				throw new LeproToolkitException('Access forbidden', 403);
+			}
+		}
 
-        return $result;
-    }
+		return $result;
+	}
+
+	/**
+	 * Проверка на 404
+	 *
+	 * @param $response
+	 * @return bool
+	 */
+	protected function is404($response)
+	{
+		if(strpos($response, 'ДОБРО ПОЖАЛОВАТЬ НА СТРАНИЦУ 404! ')) {
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Проверка на балет
+	 *
+	 * @param $response
+	 * @return bool
+	 */
+	protected function isOffline($url)
+	{
+		if($url == 'http://' . $this->baseHost . '/off/index.html') {
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Проверка на существование подлепры
+	 *
+	 * @param $url
+	 * @return bool
+	 */
+	protected function isNoSuchSubSite($response)
+	{
+		if(strpos($response, 'Дело в том, что такого сайта еще не существует.')) {
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Проверка на закрытость подлепры
+	 *
+	 * @param $response
+	 * @return bool
+	 */
+	protected function isAccessForbidden($response)
+	{
+		if(strpos($response, 'Просто у вас нет доступа')) {
+			return true;
+		}
+
+		return false;
+	}
 }
