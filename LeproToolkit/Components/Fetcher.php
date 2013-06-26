@@ -59,7 +59,7 @@ class Fetcher {
 	 * @return mixed
 	 * @throws LeproToolkitException
 	 */
-	public function fetchUrl($uri)
+	public function fetchUrl($url)
 	{
 		try {
 			curl_setopt($this->_curl, CURLOPT_URL, $url);
@@ -81,20 +81,20 @@ class Fetcher {
 		}
 
 		// TODO: сейчас не используется, продумать более правильный алгоритм
-		if($this->subSite != '')
-		{
+//		if($this->subSite != '')
+//		{
 			if($this->isNoSuchSubSite($url))
 			{
 				throw new LeproToolkitException('No such subsite', 404);
 			}
 
-			if($this->isAccessForbidden($response))
+			if($this->isAccessForbidden($url))
 			{
 				throw new LeproToolkitException('Access forbidden', 403);
 			}
-		}
+		//}
 
-		return $result;
+		return $response;
 	}
 
 	/**
@@ -133,9 +133,9 @@ class Fetcher {
 	 * @param $url
 	 * @return bool
 	 */
-	protected function isNoSuchSubSite($response)
+	protected function isNoSuchSubSite($url)
 	{
-		if(strpos($response, 'Дело в том, что такого сайта еще не существует.')) {
+		if(parse_url($url, PHP_URL_PATH) == '/missing.html') {
 			return true;
 		}
 
@@ -148,9 +148,9 @@ class Fetcher {
 	 * @param $response
 	 * @return bool
 	 */
-	protected function isAccessForbidden($response)
+	protected function isAccessForbidden($url)
 	{
-		if(strpos($response, 'Просто у вас нет доступа')) {
+		if(parse_url($url, PHP_URL_PATH) == '/gtfo/') {
 			return true;
 		}
 

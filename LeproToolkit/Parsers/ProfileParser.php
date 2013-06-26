@@ -86,6 +86,11 @@ class ProfileParser {
 	{
 		$json = json_decode($this->_response);
 
+		if($json->status == 'ERR')
+		{
+			throw new LeproToolkitException($json->message);
+		}
+
 		$this->_profile = new Profile();
 
 		$this->_profile ->uid              = $json->uid;

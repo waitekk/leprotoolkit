@@ -83,6 +83,7 @@ class LeproToolkit {
 			$this->_curl = curl_init();
 			curl_setopt($this->_curl, CURLOPT_RETURNTRANSFER, 1);
 			curl_setopt($this->_curl, CURLOPT_VERBOSE, 1);
+			curl_setopt($this->_curl, CURLOPT_FOLLOWLOCATION, true);
 			curl_setopt($this->_curl, CURLOPT_COOKIE, $this->prepareCookies());
 		}
 
