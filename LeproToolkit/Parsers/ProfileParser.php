@@ -63,7 +63,7 @@ class ProfileParser {
 		{
 			$this->_dom = new \DOMDocument;
 
-            // подавление ругани на некорректный HTML
+			// подавление ругани на некорректный HTML
 			@$this->_dom->loadHtml($this->_response);
 		}
 
@@ -132,7 +132,7 @@ class ProfileParser {
 		$this->_profile->name				= $this->extractName();
 		$this->_profile->city				= $this->extractCity();
 		$this->_profile->country			= $this->extractCountry();
-        $this->_profile->userpic			= $this->extractUserpic();
+		$this->_profile->userpic			= $this->extractUserpic();
 
 		$this->_profile->karma				= $this->extractKarma();
 		$this->_profile->voteweight			= $this->extractVoteWeight();
@@ -149,114 +149,114 @@ class ProfileParser {
 		return $this->_xpath->query('//*[@id="uservote"]/div')->item(0)->getAttribute('uid');
 	}
 
-    /**
-     * Вычленяет юзернейм
-     *
-     * @return string
-     */
-    protected function extractUsername()
+	/**
+	 * Вычленяет юзернейм
+	 *
+	 * @return string
+	 */
+	protected function extractUsername()
 	{
 		return trim( $this->_xpath->query('//*[contains(@class, "username")]/a')->item(0)->textContent );
 	}
 
-    /**
-     * Вычленяет имя
-     *
-     * @return string
-     */
-    protected function extractName()
+	/**
+	 * Вычленяет имя
+	 *
+	 * @return string
+	 */
+	protected function extractName()
 	{
 		return trim( $this->_xpath->query('//*[contains(@class, "userbasicinfo")]/h3')->item(0)->textContent );
 	}
 
-    /**
-     * Вычленяет город
-     *
-     * @return string
-     */
-    protected function extractCity()
+	/**
+	 * Вычленяет город
+	 *
+	 * @return string
+	 */
+	protected function extractCity()
 	{
 		$geo = $this->extractGeo();
 		return trim( $geo[1] );
 	}
 
-    /**
-     * Вычленяет страну
-     *
-     * @return string
-     */
-    protected function extractCountry()
+	/**
+	 * Вычленяет страну
+	 *
+	 * @return string
+	 */
+	protected function extractCountry()
 	{
 		$geo = $this->extractGeo();
 		return trim( $geo[0] );
 	}
 
-    /**
-     * Вычленяет геоданные
-     *
-     * @return array
-     */
-    protected function extractGeo()
+	/**
+	 * Вычленяет геоданные
+	 *
+	 * @return array
+	 */
+	protected function extractGeo()
 	{
 		return explode( ",", $this->_xpath->query('//*[contains(@class, "userego")]')->item(0)->textContent );
 	}
 
-    /**
-     * Вычленяет значение кармы
-     *
-     * @return integer
-     */
-    protected function extractKarma()
+	/**
+	 * Вычленяет значение кармы
+	 *
+	 * @return integer
+	 */
+	protected function extractKarma()
 	{
 		return trim( $this->_xpath->query('//*[contains(@class, "rating")]/em')->item(0)->textContent );
 	}
 
-    /**
-     * Вычленяет информацию о голосах
-     *
-     * @return array
-     */
-    protected function extractStats()
+	/**
+	 * Вычленяет информацию о голосах
+	 *
+	 * @return array
+	 */
+	protected function extractStats()
 	{
 		return explode( 'Голосов' ,trim( $this->_xpath->query('//*[contains(@class, "uservoterate")]')->item(0)->textContent) );
 	}
 
-    /**
-     * Вычленяет вес голоса
-     *
-     * @return int
-     */
-    protected function extractVoteWeight()
+	/**
+	 * Вычленяет вес голоса
+	 *
+	 * @return int
+	 */
+	protected function extractVoteWeight()
 	{
 		$stat = $this->extractStats();
 		return (int) preg_replace('/\D/', '', $stat[0]);
 	}
 
-    /**
-     * Вычленяет количество голосов в день
-     *
-     * @return int
-     */
-    protected function extractVoteCount()
+	/**
+	 * Вычленяет количество голосов в день
+	 *
+	 * @return int
+	 */
+	protected function extractVoteCount()
 	{
 		$stat = $this->extractStats();
 		return (int) preg_replace('/\D/', '', $stat[1]);
 	}
 
-    /**
-     * Вычленяет URL юзерпика
-     * @return string
-     */
-    protected function extractUserpic()
-    {
-        $img = $this->_xpath->query('//*[contains(@class, "userpic")]/tbody/tr/td/img')->item(0);
+	/**
+	 * Вычленяет URL юзерпика
+	 * @return string
+	 */
+	protected function extractUserpic()
+	{
+		$img = $this->_xpath->query('//*[contains(@class, "userpic")]/tbody/tr/td/img')->item(0);
 
-        // если юзерпика нет, элемента img внутри таблицы нет вообще
-        if($img != null)
-        {
-            return $img->getAttribute('src');
-        }
+		// если юзерпика нет, элемента img внутри таблицы нет вообще
+		if($img != null)
+		{
+			return $img->getAttribute('src');
+		}
 
-        return '';
-    }
+		return '';
+	}
 }
