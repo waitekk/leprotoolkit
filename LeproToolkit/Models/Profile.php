@@ -82,6 +82,31 @@ class Profile {
 	 */
 	public $voteweight;
 
+    /**
+     * Голосов в день
+     */
+    public $votesCount;
+
+    /**
+     * Сколько раз избирался ПГ
+     */
+    public $presidentialTermsCount;
+
+    /**
+     * В отставке с (ПГ)
+     */
+    public $presidentialRetirement;
+
+    /**
+     * Сколько раз избирался министром
+     */
+    public $ministerialTermsCount;
+
+    /**
+     * В оставке с (министр)
+     */
+    public $ministerialRetirement;
+
 	/**
 	 * Проверяет большой рассказ о себе на наличие подстроки
 	 *
