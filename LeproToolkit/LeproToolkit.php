@@ -12,26 +12,14 @@ use LeproToolkit\Components\LeproToolkitException;
  * @package LeproToolkit
  */
 class LeproToolkit {
-	/**
-	 * Ссылка на ресурс с курлом
-	 */
-	protected $_curl;
+
+	public $fetcher = '\LeproToolkit\Components\Fetcher';
 
 	/**
 	 * Фетчер
 	 * @var Fetcher
 	 */
 	protected $_fetcher;
-
-	/**
-	 * Идентификатор сессии
-	 */
-	protected $_sid;
-
-	/**
-	 * Лепрономер, от чьего имени будем работать
-	 */
-	protected $_uid;
 
 	/**
 	 * Запуск
@@ -53,50 +41,12 @@ class LeproToolkit {
 			throw new LeproToolkitException('Wrong user ID');
 		}
 
-		$this->_uid = $uid;
-
 		if(strlen($sid) != 32)
 		{
-			throw new LeproToolkitException('Wrond session ID');
+			throw new LeproToolkitException('Wrong session ID');
 		}
 
-		$this->_sid = $sid;
-
-		$this->initCurl();
-	}
-
-	/**
-	 * Гарантированно прибиваем курл
-	 */
-	public function __destruct()
-	{
-		curl_close($this->_curl);
-	}
-
-	/**
-	 * Инициализирует курл
-	 */
-	protected function initCurl()
-	{
-		if(null === $this->_curl)
-		{
-			$this->_curl = curl_init();
-			curl_setopt($this->_curl, CURLOPT_RETURNTRANSFER, 1);
-			curl_setopt($this->_curl, CURLOPT_VERBOSE, 1);
-			curl_setopt($this->_curl, CURLOPT_FOLLOWLOCATION, true);
-			curl_setopt($this->_curl, CURLOPT_COOKIE, $this->prepareCookies());
-		}
-
-		return $this->_curl;
-	}
-
-	/**
-	 * Готовим нужные куки
-	 * @return string
-	 */
-	protected function prepareCookies()
-	{
-		return 'uid=' . $this->_uid . '; sid=' . $this->_sid;
+		$this->_fetcher = new $this->fetcher($uid, $sid);
 	}
 
 	/**
@@ -106,11 +56,6 @@ class LeproToolkit {
 	 */
 	protected function getFetcher()
 	{
-		if(null === $this->_fetcher)
-		{
-			$this->_fetcher = new Fetcher($this->_curl);
-		}
-
 		return $this->_fetcher;
 	}
 
@@ -138,5 +83,10 @@ class LeproToolkit {
 		$parser = new ProfileParser($this->getFetcher()->fetchProfileById($uid), 'json');
 		$profile = $parser->parseProfile();
 		return $profile;
+	}
+
+	public function getContents($url)
+	{
+		return $this->getFetcher()->fetchUrl($url);
 	}
 }

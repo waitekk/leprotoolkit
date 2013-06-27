@@ -16,18 +16,44 @@ class Fetcher {
 	public $baseHost = 'leprosorium.ru';
 
 	/**
-	 * Подлепра
+	 * Лепрономер, от чьего имени будем работать
 	 */
-	public $subSite = '';
+	protected $_uid;
+
+	/**
+	 * Идентификатор сессии
+	 */
+	protected $_sid;
 
 	/**
 	 * Cсылка на curl
 	 */
 	protected $_curl;
 
-	public function __construct($curl)
+	public function __construct($uid, $sid)
 	{
-		$this->_curl = $curl;
+		$this->_sid = $sid;
+		$this->_uid = $uid;
+
+		$this->_curl = curl_init();
+		curl_setopt($this->_curl, CURLOPT_RETURNTRANSFER, 1);
+		curl_setopt($this->_curl, CURLOPT_VERBOSE, 1);
+		curl_setopt($this->_curl, CURLOPT_FOLLOWLOCATION, true);
+		curl_setopt($this->_curl, CURLOPT_COOKIE, $this->prepareCookies());
+	}
+
+	public function __destruct()
+	{
+		curl_close($this->_curl);
+	}
+
+	/**
+	 * Готовим нужные куки
+	 * @return string
+	 */
+	protected function prepareCookies()
+	{
+		return 'uid=' . $this->_uid . '; sid=' . $this->_sid;
 	}
 
 	/**
@@ -70,6 +96,11 @@ class Fetcher {
 			// todo: log?
 		}
 
+		if(!$response)
+		{
+			throw new LeproToolkitException(curl_error($this->_curl), 500);
+		}
+
 		if($this->is404($response))
 		{
 			throw new LeproToolkitException('404', 404);
@@ -80,19 +111,15 @@ class Fetcher {
 			throw new LeproToolkitException('Leprosorium is offline', 503);
 		}
 
-		// TODO: сейчас не используется, продумать более правильный алгоритм
-//		if($this->subSite != '')
-//		{
-			if($this->isNoSuchSubSite($url))
-			{
-				throw new LeproToolkitException('No such subsite', 404);
-			}
+		if($this->isNoSuchSubSite($url))
+		{
+			throw new LeproToolkitException('No such subsite', 404);
+		}
 
-			if($this->isAccessForbidden($url))
-			{
-				throw new LeproToolkitException('Access forbidden', 403);
-			}
-		//}
+		if($this->isAccessForbidden($url))
+		{
+			throw new LeproToolkitException('Access forbidden', 403);
+		}
 
 		return $response;
 	}
@@ -120,7 +147,7 @@ class Fetcher {
 	 */
 	protected function isOffline($url)
 	{
-		if($url == 'http://' . $this->baseHost . '/off/index.html') {
+		if(parse_url($url, PHP_URL_PATH == '/off/index.html')) {
 			return true;
 		}
 
