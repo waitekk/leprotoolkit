@@ -1,7 +1,10 @@
 {
-    "name": "waitekk/leprotoolkit",
+    "name": "leprotoolkit/leprotoolkit",
     "description": "Small and convenient toolkit for Leprosorium website.",
     "minimum-stability": "dev",
+    "keywords": ["leprosorium"],
+    "homepage": "http://github.com/waitekk/leprotoolkit",
+    "type": "library",
     "authors": [
         {
             "name": "Max Zaets",
@@ -10,7 +13,7 @@
     ],
     "autoload": {
         "psr-0": {
-            "LeproToolkit": "LeproToolkit/"
+            "LeproToolkit": "src/"
         }
     }
 }
