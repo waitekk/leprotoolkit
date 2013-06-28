@@ -106,7 +106,7 @@ class Fetcher {
 			throw new LeproToolkitException('404', 404);
 		}
 
-		if($this->isOffline($response))
+		if($this->isOffline($response) || $this->isBroken($response))
 		{
 			throw new LeproToolkitException('Leprosorium is offline', 503);
 		}
@@ -172,7 +172,7 @@ class Fetcher {
 	/**
 	 * Проверка на закрытость подлепры
 	 *
-	 * @param $response
+	 * @param $url
 	 * @return bool
 	 */
 	protected function isAccessForbidden($url)
@@ -183,4 +183,14 @@ class Fetcher {
 
 		return false;
 	}
+
+    protected function isBroken($response)
+    {
+        if(strpos($response, '<title>Невероятное приключение начинается здесь и сейчас!</title>'))
+        {
+            return true;
+        }
+
+        return false;
+    }
 }
