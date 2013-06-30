@@ -81,16 +81,18 @@ class Fetcher {
 	/**
 	 * Основная функция обращения к лепре
 	 *
-	 * @param $url
+	 * @param $lastEffectiveUrl
 	 * @return mixed
 	 * @throws LeproToolkitException
 	 */
-	public function fetchUrl($url)
+	public function fetchUrl($requestedUrl)
 	{
 		try {
-			curl_setopt($this->_curl, CURLOPT_URL, $url);
+			curl_setopt($this->_curl, CURLOPT_URL, $requestedUrl);
 			$response = curl_exec($this->_curl);
-			$url = curl_getinfo($this->_curl, CURLINFO_EFFECTIVE_URL);
+			$lastEffectiveUrl = curl_getinfo($this->_curl, CURLINFO_EFFECTIVE_URL);
+
+			$urlPath = parse_url($lastEffectiveUrl, PHP_URL_PATH);
 		} catch(\Exception $e)
 		{
 			// todo: log?
@@ -99,6 +101,11 @@ class Fetcher {
 		if(!$response)
 		{
 			throw new LeproToolkitException(curl_error($this->_curl), 500);
+		}
+
+		if($this->isLoginRequired($urlPath))
+		{
+			throw new LeproToolkitException('Wrong credentials provided.', 403);
 		}
 
 		if($this->is404($response))
@@ -111,12 +118,12 @@ class Fetcher {
 			throw new LeproToolkitException('Leprosorium is offline', 503);
 		}
 
-		if($this->isNoSuchSubSite($url))
+		if($this->isNoSuchSubSite($urlPath))
 		{
 			throw new LeproToolkitException('No such subsite', 404);
 		}
 
-		if($this->isAccessForbidden($url))
+		if($this->isAccessForbidden($urlPath))
 		{
 			throw new LeproToolkitException('Access forbidden', 403);
 		}
@@ -147,7 +154,7 @@ class Fetcher {
 	 */
 	protected function isOffline($url)
 	{
-		if(parse_url($url, PHP_URL_PATH == '/off/index.html')) {
+		if($url == '/off/index.html') {
 			return true;
 		}
 
@@ -162,7 +169,7 @@ class Fetcher {
 	 */
 	protected function isNoSuchSubSite($url)
 	{
-		if(parse_url($url, PHP_URL_PATH) == '/missing.html') {
+		if($url == '/missing.html') {
 			return true;
 		}
 
@@ -177,7 +184,7 @@ class Fetcher {
 	 */
 	protected function isAccessForbidden($url)
 	{
-		if(parse_url($url, PHP_URL_PATH) == '/gtfo/') {
+		if($url == '/gtfo/') {
 			return true;
 		}
 
@@ -193,4 +200,14 @@ class Fetcher {
 
         return false;
     }
+
+	protected function isLoginRequired($url)
+	{
+		if($url == '/login/')
+		{
+			return true;
+		}
+
+		return false;
+	}
 }
