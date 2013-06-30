@@ -85,6 +85,12 @@ class LeproToolkit {
 		return $profile;
 	}
 
+	/**
+	 * Возвращает содержимое произвольной страницы
+	 *
+	 * @param $url
+	 * @return mixed
+	 */
 	public function getContents($url)
 	{
 		return $this->getFetcher()->fetchUrl($url);
