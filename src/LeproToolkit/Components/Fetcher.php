@@ -139,7 +139,7 @@ class Fetcher {
 	 */
 	protected function is404($response)
 	{
-		if(strpos($response, 'ДОБРО ПОЖАЛОВАТЬ НА СТРАНИЦУ 404! ')) {
+		if(strpos($response, '<span class=small> к сожалению, такого документа не существует</span>')) {
 			return true;
 		}
 
@@ -191,7 +191,13 @@ class Fetcher {
 		return false;
 	}
 
-    protected function isBroken($response)
+	/**
+	 * Проверка на экономистов
+	 *
+	 * @param $response
+	 * @return bool
+	 */
+	protected function isBroken($response)
     {
         if(strpos($response, '<title>Невероятное приключение начинается здесь и сейчас!</title>'))
         {
@@ -201,6 +207,12 @@ class Fetcher {
         return false;
     }
 
+	/**
+	 * Проверка на слетевшую сессию
+	 *
+	 * @param $url
+	 * @return bool
+	 */
 	protected function isLoginRequired($url)
 	{
 		if($url == '/login/')
