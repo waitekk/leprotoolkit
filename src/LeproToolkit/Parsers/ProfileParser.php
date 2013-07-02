@@ -43,9 +43,10 @@ class ProfileParser {
 
 	public function __construct($response, $type = 'html')
 	{
+		// исключение есть в фетчере, оставим здесь на случай прямого вызова в обход фасада
 		if($response == '')
 		{
-			throw new LeproToolkitException('No data retrieved'); // todo: перенести исключение в фетчер?
+			throw new LeproToolkitException('No data retrieved');
 		}
 
 		$this->_response = $response;
@@ -126,17 +127,18 @@ class ProfileParser {
 			// todo: log
 		}
 
-		$this->_profile->uid				= $this->extractUid();
-		$this->_profile->username			= $this->extractUsername();
+		$this->_profile->uid                = $this->extractUid();
+		$this->_profile->username           = $this->extractUsername();
 
-		$this->_profile->name				= $this->extractName();
-		$this->_profile->city				= $this->extractCity();
-		$this->_profile->country			= $this->extractCountry();
-		$this->_profile->userpic			= $this->extractUserpic();
+		$this->_profile->name               = $this->extractName();
+		$this->_profile->city               = $this->extractCity();
+		$this->_profile->country            = $this->extractCountry();
+		$this->_profile->userpic            = $this->extractUserpic();
+		$this->_profile->gender             = $this->extractGender();
 
-		$this->_profile->karma				= $this->extractKarma();
-		$this->_profile->voteweight			= $this->extractVoteWeight();
-		$this->_profile->votesCount			= $this->extractVoteCount();
+		$this->_profile->karma              = $this->extractKarma();
+		$this->_profile->voteweight         = $this->extractVoteWeight();
+		$this->_profile->votesCount         = $this->extractVoteCount();
 	}
 
 	/**
@@ -258,5 +260,22 @@ class ProfileParser {
 		}
 
 		return '';
+	}
+
+	/**
+	 * Вычленяет пол
+	 *
+	 * @return int Форму половых органов
+	 */
+	protected function extractGender()
+	{
+		$gender = $this->_xpath->query('//*[contains(@class, "userrating")]')->item(0)->textContent;
+
+		if(strpos($gender, 'Написала'))
+		{
+			return 0;
+		} else {
+			return 1;
+		}
 	}
 }
