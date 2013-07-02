@@ -272,7 +272,7 @@ class ProfileParser {
 	{
 		$gender = $this->_xpath->query('//*[contains(@class, "userrating")]')->item(0)->textContent;
 
-		if(strpos($gender, 'Написала'))
+		if(preg_match('/Написала/', $gender))
 		{
 			return 0;
 		} else {

@@ -115,7 +115,7 @@ class Profile {
      */
     public function storyContains($str)
     {
-        if(strpos($this->userstory, $str))
+        if(preg_match('/' . $str .'/', $this->userstory))
         {
             return true;
         }
