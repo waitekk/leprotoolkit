@@ -135,6 +135,7 @@ class ProfileParser {
 		$this->_profile->country            = $this->extractCountry();
 		$this->_profile->userpic            = $this->extractUserpic();
 		$this->_profile->gender             = $this->extractGender();
+		$this->_profile->userstory          = $this->extractUserStory();
 
 		$this->_profile->karma              = $this->extractKarma();
 		$this->_profile->voteweight         = $this->extractVoteWeight();
@@ -277,5 +278,15 @@ class ProfileParser {
 		} else {
 			return 1;
 		}
+	}
+
+	/**
+	* Вычленяет большой рассказ о себе
+	*
+	* @return string
+	*/
+	protected function extractUserStory()
+	{
+		return trim( $this->_xpath->query('//*[contains(@class, "userstory")]')->item(0)->textContent );
 	}
 }
