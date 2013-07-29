@@ -1,6 +1,7 @@
 {
     "name": "leprotoolkit/leprotoolkit",
     "description": "Small and convenient toolkit for Leprosorium website.",
+    "license": "MIT",
     "minimum-stability": "dev",
     "keywords": ["leprosorium"],
     "homepage": "http://github.com/waitekk/leprotoolkit",

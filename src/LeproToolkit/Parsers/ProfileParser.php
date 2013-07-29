@@ -124,7 +124,7 @@ class ProfileParser {
 			$this->_xpath = new \DOMXPath($this->getDom());
 		} catch(\Exception $e)
 		{
-			// todo: log
+			throw new LeproToolkitException("DOM parsing error", 500);
 		}
 
 		$this->_profile->uid                = $this->extractUid();

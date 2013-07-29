@@ -95,7 +95,7 @@ class Fetcher {
 			$urlPath = parse_url($lastEffectiveUrl, PHP_URL_PATH);
 		} catch(\Exception $e)
 		{
-			// todo: log?
+			throw new LeproToolkitException("Error fetching URL", 500);
 		}
 
 		if(!$response)
